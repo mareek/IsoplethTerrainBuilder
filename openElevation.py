@@ -8,14 +8,8 @@ class postParameter:
     def __init__(self):
         self.locations = []
 
-    def addCoordinates(self, latitude, longitude):
-        self.addLocation(location(latitude, longitude))
-
     def addLocation(self, location):
         self.locations.append(location)
-
-
-elevationApiUrl = 'https://api.open-elevation.com/api/v1/lookup'
 
 
 def downloadLocations(locations):
@@ -23,6 +17,7 @@ def downloadLocations(locations):
     for location in locations:
         postPayload.addLocation(location)
 
+    elevationApiUrl = 'https://api.open-elevation.com/api/v1/lookup'
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
     jsonPayload = json.dumps(postPayload, default=lambda o: o.__dict__)
 

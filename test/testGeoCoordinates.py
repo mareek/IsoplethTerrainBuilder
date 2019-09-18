@@ -46,6 +46,19 @@ class TestLocation(unittest.TestCase):
         self.assertGreater(finish.longitude, 4.9)
         self.assertLess(finish.longitude, 5.1)
 
+    def test_getStableLocatiosnInZone(self):
+        swCorner = location(0,0)
+        neCorner = swCorner.moveNorth(200).moveEast(200)
+        manyLocations = location.getAligneLocationsInZone(swCorner, neCorner)
+        self.assertEqual(9, len(manyLocations))
+        
+        singleLocation = location.getAligneLocationsInZone(swCorner.moveNorth(1).moveEast(1), 
+                                                           neCorner.moveNorth(-1).moveEast(-1))
+        self.assertEqual(1, len(singleLocation))
+
+        self.assertEqual(singleLocation[0].latitude, manyLocations[4].latitude)
+        self.assertEqual(singleLocation[0].longitude, manyLocations[4].longitude)
+
 
 if __name__ == '__main__':
     unittest.main()

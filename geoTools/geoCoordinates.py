@@ -33,6 +33,36 @@ class location:
         latitudeFactor = 1 / math.cos(math.radians(abs(latitude)))
         return 90 * latitudeFactor * distanceFromGreenwichMeridianInMeter/10000000
 
+    @staticmethod
+    def getAligneLocationsInZone(firstCorner, secondCorner, offsetInMeter=100):
+        southWestCorner = location(min([firstCorner.latitude, secondCorner.latitude]),
+                                   min([firstCorner.longitude, secondCorner.longitude]))
+        northEastCorner = location(max([firstCorner.latitude, secondCorner.latitude]),
+                                   max([firstCorner.longitude, secondCorner.longitude]))
+
+        distFromEquator = southWestCorner.distanceFromEquatorInMeter()
+        startNorth = offsetInMeter * (distFromEquator // offsetInMeter)
+        if distFromEquator > 0:
+            startNorth += offsetInMeter
+
+        distFromGreenwich = southWestCorner.distanceFromGreenwichMeridianInMeter()
+        startEast = offsetInMeter * (distFromGreenwich // offsetInMeter)
+        if distFromGreenwich > 0:
+            startEast += offsetInMeter
+
+        referenceLatitude = location(0, 0)
+
+        result = []
+        offsetNorth = 0
+        while referenceLatitude.moveNorth(startNorth + offsetNorth).latitude <= northEastCorner.latitude:
+            offsetEast = 0
+            referenceLongitude = referenceLatitude.moveNorth(startNorth + offsetNorth)
+            while referenceLongitude.moveEast(startEast + offsetEast).longitude <= northEastCorner.longitude:
+                result.append(referenceLongitude.moveEast(startEast + offsetEast))
+                offsetEast += offsetInMeter
+            offsetNorth += offsetInMeter
+        return result
+
     @classmethod
     def from_json(cls, data):
         return cls(**data)

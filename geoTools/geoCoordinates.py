@@ -14,23 +14,24 @@ class location:
         latitudeFactor = math.cos(math.radians(abs(self.latitude)))
         return latitudeFactor * self.longitude * 10000000 / 90
 
+    def moveNorth(self, distanceInMeter):
+        newLatitude = location.computeLatitude(self.distanceFromEquatorInMeter() + distanceInMeter)
+        return location(newLatitude, self.longitude)
+
+    def moveEast(self, distanceInMeter):
+        newDistanceFromGreenwich = self.distanceFromGreenwichMeridianInMeter() + distanceInMeter
+        newLongitude = location.ComputeLongitude(newDistanceFromGreenwich, self.distanceFromEquatorInMeter())
+        return location(self.latitude, newLongitude)
+
     @staticmethod
     def computeLatitude(distanceFromeEquatorInMeter):
         return 90 * distanceFromeEquatorInMeter / 10000000
-    
+
     @staticmethod
     def ComputeLongitude(distanceFromGreenwichMeridianInMeter, distanceFromeEquatorInMeter):
         latitude = location.computeLatitude(distanceFromeEquatorInMeter)
         latitudeFactor = 1 / math.cos(math.radians(abs(latitude)))
         return 90 * latitudeFactor * distanceFromGreenwichMeridianInMeter/10000000
-
-
-    def toLine(self, separator):
-        return separator.join(map(lambda f: str(f), [self.latitude, self.longitude, self.elevation]))
-
-    @staticmethod
-    def headerLine(separator):
-        return separator.join(['latitude', 'longitude', 'elevation'])
 
     @classmethod
     def from_json(cls, data):

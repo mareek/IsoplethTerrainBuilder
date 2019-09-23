@@ -34,3 +34,14 @@ def downloadLocations(locations):
 
     jsonResult = result.json()
     return list(map(location.from_json, jsonResult["results"]))
+
+
+def computeFakeAltitude(location):
+    latitudeStr = str(location.latitude)
+    longitudeStr = str(location.longitude)
+    elevationStr = latitudeStr[-1:] + longitudeStr[-2:]
+    return int(elevationStr)
+
+
+def fakeDownloadLocations(locations):
+    return map(lambda l: location(l.latitude, l.longitude, computeFakeAltitude(l)), locations)

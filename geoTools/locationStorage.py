@@ -19,12 +19,12 @@ class locationDatabase:
     def getLocation(self, latitude, longitude):
         cur = self.connection.cursor()
         cur.execute("select elevation from location where latitude = ? and longitude = ?", (latitude, longitude))
-        elevation = cur.fetchone()
+        elevationTuple = cur.fetchone()
         cur.close()
-        if elevation == None:
+        if elevationTuple == None:
             return None
         else:
-            return location(latitude, longitude, next(elevation))
+            return location(latitude, longitude, elevationTuple[0])
 
     # Add the location to the database
     def addLocation(self, location):

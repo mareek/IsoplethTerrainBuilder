@@ -1,5 +1,5 @@
 import sqlite3
-from geoCoordinates import location
+from geoTools.geoCoordinates import location
 
 
 class locationDatabase:

@@ -1,7 +1,7 @@
-from geoCoordinates import location
-import openElevation
 import json
-import locationStorage
+import geoTools.openElevation
+import geoTools.locationStorage 
+from geoTools.geoCoordinates import location
 
 
 class elevationManager:
@@ -39,7 +39,7 @@ class elevationManager:
 
 
 #resultLocations = openElevation.downloadLocations(locations)
-manager = elevationManager(locationStorage.locationDatabase(), openElevation.fakeDownloadLocations)
+manager = elevationManager(geoTools.locationStorage.locationDatabase(), geoTools.openElevation.fakeDownloadLocations)
 locations = manager.getLocationsFromZone(location(45.844428, 6.202622), location(45.843075, 6.205402))
 resultLocations = manager.getLocationsFromZone(location(45.844428, 6.202622), location(45.843075, 6.205402))
 

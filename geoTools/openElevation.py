@@ -1,7 +1,7 @@
 import requests
 import json
 import time
-from geoCoordinates import location
+from geoTools.geoCoordinates import location
 
 
 class postParameter:

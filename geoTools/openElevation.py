@@ -26,8 +26,7 @@ def downloadLocations(locations):
         try:
             result = requests.post(elevationApiUrl, data=jsonPayload, headers=headers)
             if not result.ok:
-                result = None
-                time.sleep(0.5)
+                raise Exception()
         except:
             result = None
             time.sleep(0.5)

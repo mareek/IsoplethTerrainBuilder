@@ -1,11 +1,11 @@
 import unittest
 import geoTools
-import geoTools.locationStorage
+from geoTools.locationStorage import locationDatabase
 from geoTools.geoCoordinates import location
 
 class TestLocationDatabase(unittest.TestCase):
     def setUp(self):
-        self.db = geoTools.locationStorage.locationDatabase()
+        self.db = locationDatabase()
 
     def test_getLocationOnEmptyDbRetirnsNone(self):
         self.assertEqual(self.db.getLocation(0, 0), None)

@@ -26,7 +26,8 @@ class locationDatabase:
         else:
             return location(latitude, longitude, elevationTuple[0])
 
-    # Add the location to the database
-    def addLocation(self, location):
-        row = (location.latitude, location.longitude, location.elevation)
-        self.connection.execute("insert into location (latitude, longitude, elevation) values (?,?,?)", row)
+    def addLocations(self, locations):
+        for location in locations:
+            row = (location.latitude, location.longitude, location.elevation)
+            self.connection.execute("insert into location (latitude, longitude, elevation) values (?,?,?)", row)
+        self.connection.commit()

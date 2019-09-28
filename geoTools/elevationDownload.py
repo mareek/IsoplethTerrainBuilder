@@ -25,8 +25,7 @@ class elevationManager:
         while i < len(locationsToDownload):
             locationsToUpdate = locationsToDownload[i:i + chunckSize]
             self.updateLocations(locationsToUpdate, self.downloadFunc(locationsToUpdate))
-            for location in locationsToUpdate:
-                self.locationDb.addLocation(location)
+            self.locationDb.addLocations(locationsToUpdate)
             i += chunckSize
 
     def updateLocations(self, locationsToUpdate, downloadedLocations):

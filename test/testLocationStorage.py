@@ -11,7 +11,7 @@ class TestLocationDatabase(unittest.TestCase):
         self.assertEqual(self.db.getLocation(0, 0), None)
 
     def test_addAndGetLocation(self):
-        self.db.addLocation(location(45, 5, 150))
+        self.db.addLocations([location(45, 5, 150)])
         self.assertEqual(self.db.getLocation(0, 0), None)
         storedLocation = self.db.getLocation(45, 5)
         self.assertEqual(storedLocation.latitude, 45)

@@ -58,3 +58,10 @@ class TestLocation(unittest.TestCase):
 
         self.assertEqual(singleLocation[0].latitude, manyLocations[4].latitude)
         self.assertEqual(singleLocation[0].longitude, manyLocations[4].longitude)
+
+    def test_getNearestLocationOfZeroZero(self):
+        zeroZero = location(0,0)
+        nearestAlignedLocations = zeroZero.getNearestAlignedLocations()
+        self.assertEqual(len(nearestAlignedLocations), 1)
+        self.assertEqual(nearestAlignedLocations[0].latitude, 0)
+        self.assertEqual(nearestAlignedLocations[0].longitude, 0)

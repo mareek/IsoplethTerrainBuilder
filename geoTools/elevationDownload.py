@@ -7,7 +7,7 @@ class elevationManager:
         self.downloadFunc = downloadFunc
 
     def getLocationsFromZone(self, firstCorner, secondCorner):
-        locationsFromZone = location.getAligneLocationsInZone(firstCorner, secondCorner)
+        locationsFromZone = location.getAlignedLocationsInZone(firstCorner, secondCorner)
         locationsToDownload = []
         for locationFromZone in locationsFromZone:
             locationFromDb = self.locationDb.getLocation(locationFromZone.latitude, locationFromZone.longitude)

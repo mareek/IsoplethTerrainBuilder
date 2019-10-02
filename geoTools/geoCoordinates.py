@@ -1,5 +1,8 @@
 import math
 
+metersInOneDegree = 10000000 / 90
+degreesInOneMeter = 90 / 10000000
+
 
 class location:
     def __init__(self, latitude, longitude, elevation=None):
@@ -8,11 +11,11 @@ class location:
         self.elevation = elevation
 
     def distanceFromEquatorInMeter(self):
-        return self.latitude * 10000000 / 90
+        return self.latitude * metersInOneDegree
 
     def distanceFromGreenwichMeridianInMeter(self):
         latitudeFactor = math.cos(math.radians(abs(self.latitude)))
-        return latitudeFactor * self.longitude * 10000000 / 90
+        return latitudeFactor * self.longitude * metersInOneDegree
 
     def moveNorth(self, distanceInMeter):
         newLatitude = location.computeLatitude(self.distanceFromEquatorInMeter() + distanceInMeter)
@@ -23,18 +26,39 @@ class location:
         newLongitude = location.ComputeLongitude(newDistanceFromGreenwich, self.distanceFromEquatorInMeter())
         return location(self.latitude, newLongitude)
 
+    def getNearestAlignedLocations(self, offsetInMeter=100):
+        if self.distanceFromEquatorInMeter() % offsetInMeter == 0:
+            nearestLatitudes = [self.distanceFromEquatorInMeter()]
+        else:
+            nearestLatitude = (self.distanceFromEquatorInMeter() // offsetInMeter) * offsetInMeter
+            nearestLatitudes = [nearestLatitude, nearestLatitude + offsetInMeter]
+        if self.distanceFromGreenwichMeridianInMeter() % offsetInMeter == 0:
+            nearestLongitudes = [self.distanceFromGreenwichMeridianInMeter()]
+        else:
+            nearestLongitude = (self.distanceFromGreenwichMeridianInMeter() // offsetInMeter) * offsetInMeter
+            nearestLongitudes = [nearestLongitude, nearestLongitude + offsetInMeter]
+
+        result = []
+        referenceLatitude = location(0, 0)
+        for latitude in nearestLatitudes:
+            referenceLongitude = referenceLatitude.moveNorth(latitude)
+            for longitude in nearestLongitudes:
+                result.append(referenceLongitude.moveEast(longitude))
+
+        return result
+
     @staticmethod
     def computeLatitude(distanceFromeEquatorInMeter):
-        return 90 * distanceFromeEquatorInMeter / 10000000
+        return degreesInOneMeter * distanceFromeEquatorInMeter
 
     @staticmethod
     def ComputeLongitude(distanceFromGreenwichMeridianInMeter, distanceFromeEquatorInMeter):
         latitude = location.computeLatitude(distanceFromeEquatorInMeter)
         latitudeFactor = 1 / math.cos(math.radians(abs(latitude)))
-        return 90 * latitudeFactor * distanceFromGreenwichMeridianInMeter/10000000
+        return latitudeFactor * degreesInOneMeter * distanceFromGreenwichMeridianInMeter
 
     @staticmethod
-    def getAligneLocationsInZone(firstCorner, secondCorner, offsetInMeter=100):
+    def getAlignedLocationsInZone(firstCorner, secondCorner, offsetInMeter=100):
         southWestCorner = location(min([firstCorner.latitude, secondCorner.latitude]),
                                    min([firstCorner.longitude, secondCorner.longitude]))
         northEastCorner = location(max([firstCorner.latitude, secondCorner.latitude]),

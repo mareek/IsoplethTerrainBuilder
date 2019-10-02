@@ -49,19 +49,52 @@ class TestLocation(unittest.TestCase):
     def test_getStableLocatiosnInZone(self):
         swCorner = location(0, 0)
         neCorner = swCorner.moveNorth(200).moveEast(200)
-        manyLocations = location.getAligneLocationsInZone(swCorner, neCorner)
+        manyLocations = location.getAlignedLocationsInZone(swCorner, neCorner)
         self.assertEqual(9, len(manyLocations))
 
-        singleLocation = location.getAligneLocationsInZone(swCorner.moveNorth(1).moveEast(1),
-                                                           neCorner.moveNorth(-1).moveEast(-1))
+        singleLocation = location.getAlignedLocationsInZone(swCorner.moveNorth(1).moveEast(1),
+                                                            neCorner.moveNorth(-1).moveEast(-1))
         self.assertEqual(1, len(singleLocation))
 
         self.assertEqual(singleLocation[0].latitude, manyLocations[4].latitude)
         self.assertEqual(singleLocation[0].longitude, manyLocations[4].longitude)
 
     def test_getNearestLocationOfZeroZero(self):
-        zeroZero = location(0,0)
+        zeroZero = location(0, 0)
         nearestAlignedLocations = zeroZero.getNearestAlignedLocations()
         self.assertEqual(len(nearestAlignedLocations), 1)
         self.assertEqual(nearestAlignedLocations[0].latitude, 0)
         self.assertEqual(nearestAlignedLocations[0].longitude, 0)
+
+    def test_getNearestLocationOfDuingt(self):
+        duingt = location(45.835343, 6.205914)
+        nearestAlignedLocations = duingt.getNearestAlignedLocations()
+
+        self.assertEqual(len(nearestAlignedLocations), 4)
+
+        self.assertEqual(2, len(list(filter(lambda l: l.latitude < duingt.latitude, nearestAlignedLocations))))
+        self.assertEqual(2, len(list(filter(lambda l: l.latitude > duingt.latitude, nearestAlignedLocations))))
+
+        self.assertEqual(2, len(list(filter(lambda l: l.longitude < duingt.longitude, nearestAlignedLocations))))
+        self.assertEqual(2, len(list(filter(lambda l: l.longitude > duingt.longitude, nearestAlignedLocations))))
+
+        for nearestLocation in nearestAlignedLocations:
+            self.assertAlmostEquals(nearestLocation.latitude, duingt.latitude, 2)
+            self.assertAlmostEquals(nearestLocation.longitude, duingt.longitude, 2)
+
+    def test_getNearestLocationOfRio(self):
+        rio = location(-22.955044, -43.215391)
+        nearestAlignedLocations = rio.getNearestAlignedLocations()
+
+        self.assertEqual(len(nearestAlignedLocations), 4)
+
+        self.assertEqual(2, len(list(filter(lambda l: l.latitude < rio.latitude, nearestAlignedLocations))))
+        self.assertEqual(2, len(list(filter(lambda l: l.latitude > rio.latitude, nearestAlignedLocations))))
+
+        self.assertEqual(2, len(list(filter(lambda l: l.longitude < rio.longitude, nearestAlignedLocations))))
+        self.assertEqual(2, len(list(filter(lambda l: l.longitude > rio.longitude, nearestAlignedLocations))))
+
+        for nearestLocation in nearestAlignedLocations:
+            self.assertAlmostEquals(nearestLocation.latitude, rio.latitude, 2)
+            self.assertAlmostEquals(nearestLocation.longitude, rio.longitude, 2)
+

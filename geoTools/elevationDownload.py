@@ -2,9 +2,9 @@ from geoTools.geoCoordinates import location
 
 
 class elevationManager:
-    def __init__(self, locationDb, downloadFunc):
+    def __init__(self, locationDb, openElevationClient):
         self.locationDb = locationDb
-        self.downloadFunc = downloadFunc
+        self.openElevationClient = openElevationClient
 
     def getLocationsFromZone(self, firstCorner, secondCorner):
         locationsFromZone = location.getAlignedLocationsInZone(firstCorner, secondCorner)
@@ -24,7 +24,7 @@ class elevationManager:
         i = 0
         while i < len(locationsToDownload):
             locationsToUpdate = locationsToDownload[i:i + chunckSize]
-            self.updateLocations(locationsToUpdate, self.downloadFunc(locationsToUpdate))
+            self.updateLocations(locationsToUpdate, self.openElevationClient.downloadLocations(locationsToUpdate))
             self.locationDb.addLocations(locationsToUpdate)
             i += chunckSize
 

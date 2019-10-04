@@ -12,35 +12,38 @@ class postParameter:
         self.locations.append(location)
 
 
-def downloadLocations(locations):
-    postPayload = postParameter()
-    for location in locations:
-        postPayload.addLocation(location)
+class openElevationClient:
+    def __init__(self, apiUrl='https://api.open-elevation.com/api/v1/lookup'):
+        self.apiUrl = apiUrl
 
-    elevationApiUrl = 'https://api.open-elevation.com/api/v1/lookup'
-    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-    jsonPayload = json.dumps(postPayload, default=lambda o: o.__dict__)
+    def downloadLocations(self, locations):
+        postPayload = postParameter()
+        for location in locations:
+            postPayload.addLocation(location)
 
-    result = None
-    while result == None:
-        try:
-            result = requests.post(elevationApiUrl, data=jsonPayload, headers=headers)
-            if not result.ok:
-                raise Exception()
-        except:
-            result = None
-            time.sleep(0.5)
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        jsonPayload = json.dumps(postPayload, default=lambda o: o.__dict__)
 
-    jsonResult = result.json()
-    return list(map(location.from_json, jsonResult["results"]))
+        result = None
+        while result == None:
+            try:
+                result = requests.post(self.apiUrl, data=jsonPayload, headers=headers)
+                if not result.ok:
+                    raise Exception()
+            except:
+                result = None
+                time.sleep(0.5)
 
-
-def computeFakeAltitude(location):
-    latitudeStr = str(location.latitude)
-    longitudeStr = str(location.longitude)
-    elevationStr = latitudeStr[-1:] + longitudeStr[-2:]
-    return int(elevationStr)
+        jsonResult = result.json()
+        return list(map(location.from_json, jsonResult["results"]))
 
 
-def fakeDownloadLocations(locations):
-    return map(lambda l: location(l.latitude, l.longitude, computeFakeAltitude(l)), locations)
+class fakeOpenElevationClient:
+    def computeFakeAltitude(self, location):
+        latitudeStr = str(location.latitude)
+        longitudeStr = str(location.longitude)
+        elevationStr = latitudeStr[-1:] + longitudeStr[-2:]
+        return int(elevationStr)
+
+    def downloadLocations(self, locations):
+        return map(lambda l: location(l.latitude, l.longitude, self.computeFakeAltitude(l)), locations)

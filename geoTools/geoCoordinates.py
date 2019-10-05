@@ -19,12 +19,15 @@ class location:
 
     def moveNorth(self, distanceInMeter):
         newLatitude = location.computeLatitude(self.distanceFromEquatorInMeter() + distanceInMeter)
-        return location(newLatitude, self.longitude)
+        return location(newLatitude, self.longitude).normalize()
 
     def moveEast(self, distanceInMeter):
         newDistanceFromGreenwich = self.distanceFromGreenwichMeridianInMeter() + distanceInMeter
         newLongitude = location.ComputeLongitude(newDistanceFromGreenwich, self.distanceFromEquatorInMeter())
-        return location(self.latitude, newLongitude)
+        return location(self.latitude, newLongitude).normalize()
+
+    def normalize(self, decimalDigits=5):
+        return location(round(self.latitude, decimalDigits), round(self.longitude, decimalDigits), self.elevation)
 
     def getNearestAlignedLocations(self, offsetInMeter=100):
         if self.distanceFromEquatorInMeter() % offsetInMeter == 0:

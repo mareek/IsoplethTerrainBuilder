@@ -31,3 +31,31 @@ class locationDatabase:
             row = (location.latitude, location.longitude, location.elevation)
             self.connection.execute("insert into location (latitude, longitude, elevation) values (?,?,?)", row)
         self.connection.commit()
+
+    def getAllElevations(self):
+        cur = self.connection.cursor()
+        cur.execute("select distinct elevation from location order by 1")
+        result = cur.fetchall()
+        cur.close()
+        truc = list(map(lambda r: r[0], result))
+        return truc
+
+    def normalizeAllCoordinates(self):
+        for elevation in self.getAllElevations():
+            cur = self.connection.cursor()
+            cur.execute("select latitude, longitude, elevation from location where elevation = ?", [elevation])
+            results = cur.fetchall()
+            cur.close()
+            locationsAtElevation = list(map(lambda result: location(result[0], result[1], result[2]), results))
+            self.normalizeCoordinates(locationsAtElevation)
+
+    def normalizeCoordinates(self, locations):
+        for location in locations:
+            normalizedLocation = location.normalize()
+            if location.latitude != normalizedLocation.latitude or location.longitude != normalizedLocation.longitude:
+                sqlUpdateQuery = ("update location set latitude = ?, longitude = ?, elevation = ? "
+                                  "where latitude = ? and longitude = ?")
+                sqlUpdateParams = (normalizedLocation.latitude, normalizedLocation.longitude,
+                                   normalizedLocation.elevation, location.latitude, location.longitude)
+                self.connection.execute(sqlUpdateQuery, sqlUpdateParams)
+        self.connection.commit()
